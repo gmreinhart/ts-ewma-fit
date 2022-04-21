@@ -80,7 +80,7 @@ def optimal_h(m, metric='L2'):
             20: 0.0455, # 0.0155
         }
     elif metric == 'L1':
-        # commented values are precise expected normalized L1 norms
+        # commented values are precise expected normalized L1 errors
         opt = {
             1: 0.496,  # 0.2683
             2: 0.266,  # 0.2062
