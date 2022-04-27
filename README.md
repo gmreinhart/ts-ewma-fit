@@ -4,7 +4,7 @@ Modeling Time Series using Exponentially Weighted Moving Averages (EWMA)
 ![animation](/docs/readme.gif)
 
 ## Usage
-Templates containing code sample for usage can be found in the ![notebooks](https://github.com/gmreinhart/ts-ewma-fit/git/notbooks) folder. A typical application usually follows along the basic setup:
+Templates containing code sample for usage can be found in the ![notebooks](https://github.com/gmreinhart/ts-ewma-fit/tree/master/notebooks) folder. A typical application usually follows along the basic setup:
 
 ```
 rwalk = rw.norm_rw(1000)
