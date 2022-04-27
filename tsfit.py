@@ -179,7 +179,7 @@ class TSFit(BaseEstimator):
         '''
         if self.rw_type == 'Gaussian':
             if self.metric == 'P2':
-                return self.point_erro()
+                return self.point_error()
             if self.metric == 'L1':
                 return self.lp_score(p=1)
             if self.metric == 'L2':
@@ -187,7 +187,7 @@ class TSFit(BaseEstimator):
             raise ValueError('Metric ' + self.metric + ' unknown')
         if self.rw_type == 'Geometric':
             if self.metric == 'P2':
-                return self.geo_point_erro()
+                return self.geo_point_error()
             if self.metric == 'L1':
                 return self.geo_lp_score(p=1)
             if self.metric == 'L2':
