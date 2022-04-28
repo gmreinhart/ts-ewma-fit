@@ -8,6 +8,10 @@ This project generates fitted curves for time series (TS) using their iterated E
 
 ## Doumentation
 
+The ![documentation](https://github.com/gmreinhart/ts-ewma-fit/tree/master/docs/documentation.md) of the class `TSFit` can be found in the ![docs](https://github.com/gmreinhart/ts-ewma-fit/tree/master/docs) folder. 
+
+The mathematical background can be found in this ![paper](https://github.com/gmreinhart/ts-ewma-fit/tree/master/docs/documentation.md) in the ![docs](https://github.com/gmreinhart/ts-ewma-fit/tree/master/docs) folder. 
+
 ## Setup
 
 No special installation instructions, standard Python modules. `tsfit.py` and `beta.py` are required. `rw.py` (generates random walks) is optional.
