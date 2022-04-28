@@ -10,7 +10,7 @@ This project generates fitted curves for time series (TS) using their iterated E
 
 The ![documentation](https://github.com/gmreinhart/ts-ewma-fit/tree/master/docs/documentation.md) of the class `TSFit` can be found in the ![docs](https://github.com/gmreinhart/ts-ewma-fit/tree/master/docs) folder. 
 
-The mathematical background can be found in this ![paper](https://github.com/gmreinhart/ts-ewma-fit/tree/master/docs/documentation.md) in the ![docs](https://github.com/gmreinhart/ts-ewma-fit/tree/master/docs) folder. 
+The mathematical background can be found in this ![paper](https://github.com/gmreinhart/ts-ewma-fit/tree/master/docs/tsfit.pdf) in the ![docs](https://github.com/gmreinhart/ts-ewma-fit/tree/master/docs) folder. 
 
 ## Setup
 
