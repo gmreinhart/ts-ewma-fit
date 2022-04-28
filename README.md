@@ -12,9 +12,13 @@ This project generates fitted curves for time series (TS) using their iterated E
 
 No special installation instructions, standard Python modules. `tsfit.py` and `beta.py` are required. `rw.py` (generates random walks) is optional.
 
+Tested on python3.8.
+
 ## Usage
 
-Templates containing code samples for applications can be found in the ![notebooks](https://github.com/gmreinhart/ts-ewma-fit/tree/master/notebooks) folder. Basic usage:
+Templates containing code samples for applications can be found in the ![notebooks](https://github.com/gmreinhart/ts-ewma-fit/tree/master/notebooks) folder.
+<br>
+The syntax is similar to any of the scikit-learn classes as in the example given below:
 
 ```
 rwalk = rw.norm_rw(1000)

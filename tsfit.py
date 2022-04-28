@@ -14,6 +14,9 @@ class TSFit(BaseEstimator):
             period=None, # period for scoring and setting optimal h
             metric='L1', # point (begin of 'period'), L1, L2 or Linf
             rw_type='Gaussian'): # 'Gaussian' or 'Geometric'
+        
+        assert metric == 'P2' or metric == 'L1' or metric == 'L2'
+        assert rw_type == 'Gaussian' or rw_type == 'Geometric'
 
         # performance issues if > 20
         # assert(n_iterations <= 20)
@@ -36,15 +39,24 @@ class TSFit(BaseEstimator):
     def fit(self, X, y=None):
         '''Computes the EWMAs, attaches them as columns to self.values
         '''
+        
+        # note: if 'Geometric', internally all values are stored as logarithms
+        # to execute the algorithm. The final methods then exponentiate
+        # to return the desired results.
+        if self.rw_type == 'Geometric':
+            assert(np.all(X > 0))
+            X_ = np.log(X.copy())
+        else:
+            X_ = X.copy()
         if isinstance(X, np.ndarray):
             assert len(X.shape) == 1 # 1-dim time series only
-            self.values = pd.DataFrame(X.copy(), columns=['values'])
+            self.values = pd.DataFrame(X_, columns=['values'])
         elif isinstance(X, pd.DataFrame):
             assert X.shape[1] == 1
-            self.values = X.copy()
+            self.values = X_
             self.values.columns = ['values']
         elif isinstance(X, pd.Series):
-            self.values = pd.DataFrame(X.copy(), columns=['values'])
+            self.values = pd.DataFrame(X_, columns=['values'])
         self._ewma()
         return self
 
@@ -89,11 +101,18 @@ class TSFit(BaseEstimator):
         if drift != 0:
             est -= drift * (h * r_f - (h - 0.5) * sumalpha_f)
         est = pd.Series(est)
-        self._slope(t0)
+
+        #slope currently available only if there is no drift
+        if drift == 0:
+            self._slope(t0)
         self.est_ = est
+
+        if self.rw_type == 'Geometric':
+            return np.exp(est)
         return est
 
-    def delta(self, drift=0):
+    # not yet implemented if drift != 0. 
+    def delta(self):
         '''returns the estimate self.period steps ago. Note that this is similar
            to transform(). transform() has t0 fixed and p is variable
            whereas delta() p=self.period is fixed and t0 is variable (i.e., the
@@ -116,12 +135,12 @@ class TSFit(BaseEstimator):
         alpha = alpha.T[0]
         alpha -= b_m[:,0]
         sumalpha = np.sum(alpha)
-        ewmadiff = -self.values.diff(axis=1).dropna(axis=1)
+        if self.rw_type == 'Geometric':
+            ewmadiff = -np.exp(self.values).diff(axis=1).dropna(axis=1)
+        else:
+            ewmadiff = -self.values.diff(axis=1).dropna(axis=1)
 
         est = ewmadiff.dot(alpha)
-        if drift != 0:
-            est -= drift * (p - (h - 0.5) * sumalpha)
-
         return est
 
     def point_error(self):
@@ -130,16 +149,10 @@ class TSFit(BaseEstimator):
         '''
         index = self.t0 - self.period
         assert index >= 0
-        return abs(self.values.iloc[index, 0] - self.est_[index])
-
-    def geo_point_error(self):
-        '''Same as point_score, but assumes that self.values is the log of
-            the random walk
-        '''
-        index = self.t0 - self.period
-        assert index >= 0
-        return abs(np.exp(self.values.iloc[index, 0]) -
+        if self.rw_type == 'Geometric':
+            return abs(np.exp(self.values.iloc[index, 0]) -
                 np.exp(self.est_[index]))
+        return abs(self.values.iloc[index, 0] - self.est_[index])
 
     def lp_error(self, p=2):
         '''Returns the Lp norm over the last self.period values of the random
@@ -148,18 +161,14 @@ class TSFit(BaseEstimator):
         '''
         start = self.t0 - self.period
         end = self.t0 + 1
-        score = abs(self.values.iloc[start:end,0] - self.est_[start:end]) ** p
+        if self.rw_type == 'Geometric':
+            score = abs(np.exp(self.values.iloc[start:end,0]) -
+                        np.exp(self.est_[start:end])) ** p
+        else:
+            score = abs(self.values.iloc[start:end,0] -
+                self.est_[start:end]) ** p
         # strictly speaking we need to divide by self.period + 1, the size of
         # score. The estimate at t0 is accurate and the point "doesn't count".
-        return (score.sum() / self.period) ** (1/p)
-
-    def geo_lp_error(self, p=2):
-        '''Same as lp_score but assumes that sel.fvalues is the log of the
-            random walk'''
-        start = self.t0 - self.period
-        end = self.t0 + 1
-        score = abs(np.exp(self.values.iloc[start:end,0]) -
-                        np.exp(self.est_[start:end])) ** p
         return (score.sum() / self.period) ** (1/p)
 
     def linf_error(self):
@@ -167,7 +176,11 @@ class TSFit(BaseEstimator):
         '''
         start = self.t0 -self.period
         end = self.t0 + 1
-        absval = abs(self.values.iloc[start:end,0] - self.est_[start:end])
+        if self.rw_type == 'Geometric':
+            absval = abs(np.exp(self.values.iloc[start:end,0]) -
+                np.exp(self.est_[start:end]))
+        else:
+            absval = abs(self.values.iloc[start:end,0] - self.est_[start:end])
         return absval.max()
 
     def error(self):
@@ -177,23 +190,12 @@ class TSFit(BaseEstimator):
             == "Geometric", it is assumed that self.values represents the log
             of the random walk.
         '''
-        if self.rw_type == 'Gaussian':
-            if self.metric == 'P2':
-                return self.point_error()
-            if self.metric == 'L1':
-                return self.lp_score(p=1)
-            if self.metric == 'L2':
-                return self.lp_score(p=2)
-            raise ValueError('Metric ' + self.metric + ' unknown')
-        if self.rw_type == 'Geometric':
-            if self.metric == 'P2':
-                return self.geo_point_error()
-            if self.metric == 'L1':
-                return self.geo_lp_score(p=1)
-            if self.metric == 'L2':
-                return self.geo_lp_score(p=2)
-            raise ValueError('Metric ' + self.metric + ' unknown')
-        raise ValueError('Type ' + self.rw_type + ' unknown')
+        if self.metric == 'P2':
+            return self.point_error()
+        if self.metric == 'L1':
+            return self.lp_score(p=1)
+        if self.metric == 'L2':
+            return self.lp_score(p=2)
 
     # 'h' is usually an integer (measured in periods), but can be any double
     # if a double there may be an issue the way columns are named
@@ -230,6 +232,16 @@ class TSFit(BaseEstimator):
         row = self.values[cols].iloc[index:index+1]
         return (row.iloc[-1,:] - row.iloc[-1,:].shift(1)).dropna().to_numpy()
 
+    def _ewma_geo_diff(self, index):
+        m = self.n_iterations
+        cols = ['ewma_' + str(self.h) + '_' + str(i) for i in range(1, m+1)]
+        cols = ['values'] + cols
+        row = self.values[cols].iloc[index:index+1]
+        return (np.exp(row.iloc[-1,:]) -
+            np.exp(row.iloc[-1,:]).shift(1)).dropna().to_numpy()
+
+    # method will not be called if transfrom() is called with drift != 0
+    # the slope_ attribute will be None in this case
     def _slope(self, index):
         '''Returns the slope of the fitted curve at index=index.
             Populates the attribue self.slope_'''
@@ -237,6 +249,10 @@ class TSFit(BaseEstimator):
         betas = allbetas(m)
         b_m = betas[m].unstack().to_numpy()
         diff = self._ewma_diff(index)
+        if self.rw_type == 'Geometric':
+            diff = self._ewma_geo_diff(index)
+        else:
+            diff = self._ewma_diff(index) 
         if m == 1:
             deriv = diff.dot(b_m[:,0])
         else:
