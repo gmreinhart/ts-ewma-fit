@@ -1,6 +1,6 @@
 # class TSFit documentation
 
-Regression model estimating values of a time series (or random walk) using its iterated exponentially weighted moving averages. The results are deterministic (using explicit formulae rather than performing regressions). The mathematical background can be found in this ![paper](https://github.com/gmreinhart/ts-ewma-fit/tree/master/docs/documentation.md) in the ![docs](https://github.com/gmreinhart/ts-ewma-fit/tree/master/docs) folder. The syntax is adapted to resemble typical syntax of the skikit-learn classes.
+Regression model estimating values of a time series (or random walk) using its iterated exponentially weighted moving averages. The results are deterministic (using explicit formulae rather than performing regressions). The mathematical background can be found in this ![paper](https://github.com/gmreinhart/ts-ewma-fit/tree/master/docs/tsfit.pdf) in the ![docs](https://github.com/gmreinhart/ts-ewma-fit/tree/master/docs) folder. The syntax is adapted to resemble typical syntax of the skikit-learn classes.
 <br>
 
 Currently, time series must be homogenous (evenly spaced in time) and indexed by integers. Allowing non-homogenous time series will be implemented later.
