@@ -1,6 +1,6 @@
 # class TSFit documentation
 
-Regression model estimating values of a time series (or random walk) using its iterated exponentially weighted moving averages. The results are deterministic (using explicit formulae rather than performing regressions). The mathematical background can be found in this ![paper](https://github.com/gmreinhart/ts-ewma-fit/tree/master/docs/tsfit.pdf) in the ![docs](https://github.com/gmreinhart/ts-ewma-fit/tree/master/docs) folder. The syntax is adapted to resemble typical syntax of the skikit-learn classes.
+Regression model estimating values of a time series (or random walk) using its iterated exponentially weighted moving averages. The results are deterministic (using explicit formulae rather than performing regressions). The mathematical background can be found in this ![paper](https://github.com/gmreinhart/ts-ewma-fit/tree/master/docs/tsfit.pdf) in the ![docs](https://github.com/gmreinhart/ts-ewma-fit/tree/master/docs) folder. The syntax is adapted to resemble typical syntax of the scikit-learn classes.
 <br>
 
 Currently, time series must be homogenous (evenly spaced in time) and indexed by integers. Allowing non-homogenous time series will be implemented later.
@@ -18,9 +18,9 @@ Currently, time series must be homogenous (evenly spaced in time) and indexed by
 **period: int, default=None**
 - The period (in whole steps) over which the fit is optimized. Required. If `period=None` an error is raised. The output of the various error methods depends on this parameter. Also used to set optimal time horizons of the EWMAs.
 
-**metric: 'P2', 'L1' or 'L2', default='L1'**
+**metric: 'P1', 'L1' or 'L2', default='L1'**
 - Used in chosing the optimal time horizon `h` and also used in the `error()` method.
-  - 'P2': point approximation of the time series `period` steps in the past. `error()` gives the mean absolute error (MAE) at this single point.
+  - 'P1': point approximation of the time series `period` steps in the past. `error()` gives the mean absolute error (MAE) at this single point.
   - 'L1': Minimizes the `L1` norm over `period` steps. 'error()' gives the `L1' norm.
   - 'L2': Minimizes the `L2` norm over `period` steps. 'error()' gives the `L2' norm.
 
