@@ -25,6 +25,11 @@ Templates containing code samples for applications can be found in the ![noteboo
 The syntax is similar to any of the scikit-learn classes as in the example given below:
 
 ```
+import numpy as np
+import pandas as pd
+from tsfit import TSFit
+import rw
+
 rwalk = rw.norm_rw(1000)
 period = 100
 model = TSFit(4, period=period, metric='P2')
