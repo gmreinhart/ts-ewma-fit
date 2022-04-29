@@ -32,7 +32,7 @@ import rw
 
 rwalk = rw.norm_rw(1000)
 period = 100
-model = TSFit(4, period=period, metric='P2')
+model = TSFit(4, period=period, metric='P1')
 model.fit(rwalk)
 estimate = model.transform()
 
