@@ -5,8 +5,6 @@
 import numpy as np
 import pandas as pd
 from scipy import integrate
-import matplotlib.pyplot as plt
-plt.style.use('seaborn-whitegrid')
 
 _storebeta = {} # needed to make the recursion of beta() efficient
 
