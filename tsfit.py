@@ -15,7 +15,7 @@ class TSFit(BaseEstimator):
             metric='L1', # point (begin of 'period'), L1, L2 or Linf
             rw_type='Gaussian'): # 'Gaussian' or 'Geometric'
         
-        assert metric == 'P2' or metric == 'L1' or metric == 'L2'
+        assert metric == 'P1' or metric == 'L1' or metric == 'L2'
         assert rw_type == 'Gaussian' or rw_type == 'Geometric'
 
         # performance issues if > 20
@@ -190,7 +190,7 @@ class TSFit(BaseEstimator):
             == "Geometric", it is assumed that self.values represents the log
             of the random walk.
         '''
-        if self.metric == 'P2':
+        if self.metric == 'P1':
             return self.point_error()
         if self.metric == 'L1':
             return self.lp_score(p=1)

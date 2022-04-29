@@ -56,7 +56,7 @@ def optimal_h(m, metric='L2'):
 
     if m <= 0 or m > 20:
         raise ValueError('optimal_h available for 1 <= m <= 20')
-    if metric == 'P2':
+    if metric == 'P1':
         opt = {
             1: 0.7959,  # 0.1855
             2: 0.3518,  # 0.1139
@@ -172,7 +172,7 @@ def min_lp(m=2, lp=2):
     return hmin, minval
 
 def min_point(m):
-    '''Finds the optimal h and expected minimum SSE for metric P2'''
+    '''Finds the optimal h and expected minimum SSE'''
     xrange = np.linspace(1, m*2, 10000)
     y = sse(m)(xrange)
     minval = np.argmin(y)
