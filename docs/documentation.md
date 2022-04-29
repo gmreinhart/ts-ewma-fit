@@ -25,7 +25,7 @@ Currently, time series must be homogenous (evenly spaced in time) and indexed by
   - 'L2': Minimizes the `L2` norm over `period` steps. 'error()' gives the `L2' norm.
 
 **rw_type: 'Gaussian' or 'Geometric', default= 'Gaussian'**
-- If 'Gaussian', the time series (or random walk) is assumed to be Gaussian. If 'Geometric', the time series is assumed to be a Geometric Brownian Motion process (e.g., relevant for stock market data). TSFit takes the natural logarithm of the time series before performing the fit. The results of the methods (`transform(), delta()` or any of the error methods) are automatically exponentiated back to the original scale.
+- If 'Gaussian', the time series (or random walk) is assumed to be Gaussian. If 'Geometric', the time series is assumed to be a Geometric Brownian Motion process (e.g., relevant for stock market data). TSFit takes the natural logarithm of the time series before performing the fit. If a drift is passed to the `transform()` method, it must be given on the log scale. The results of the methods (`transform(), delta()` or any of the error methods) are automatically exponentiated back to the original scale.
 
 <br>
 
@@ -49,7 +49,7 @@ Currently, time series must be homogenous (evenly spaced in time) and indexed by
 - Fit the model with time series `X`, Computes the EWMAs. `X` must be a one-dimensional iterable (a numpy array, a pandas Series, or a pandas DataFrame with a single column named 'values').
 
 **transform(drift=0, t0=None)**
-- Performs the regression up to index `t0` (i.e., the time series is truncated at `t0`). Returns a pandas Series with the fitted values and populates the attribute `est_`. If `drift != 0` the method adjusts for the drift given. Note there is no `fit_transform()` method, since the parameters `drift` and `t0` are passed to `transform()` but not `fit()`.
+- Performs the regression up to index `t0` (i.e., the time series is truncated at `t0`). If `t0=None` the entire time series is used. Returns a pandas Series with the fitted values and populates the attribute `est_`. If `drift != 0` the method adjusts for the drift given. Note there is no `fit_transform()` method, since the parameters `drift` and `t0` are passed to `transform()` but not `fit()`.
 
 **delta()**
 - estimates the delta-operator, i.e., the difference between the time series at `index` and `index - period`. This is done for each `index > period` of the time series. Note that the `transform()` methods fixes the index `t0` and varies the step size, whereas `delta()` fixes the step size (`=period`) and varies the index.
